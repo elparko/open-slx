@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use open-slx in published work, please cite it."
+title: open-slx
+type: software
+authors:
+  - family-names: Smith
+    given-names: Parker
+license: MIT
+repository-code: "https://github.com/elparko/open-slx"

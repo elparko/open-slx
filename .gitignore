@@ -1,0 +1,12 @@
+*.slx
+*.sbd
+*.d/
+*.imzML
+*.ibd
+.venv/
+__pycache__/
+testdata/
+.DS_Store
+*_features.csv
+*_metadata.json
+.pytest_cache/
