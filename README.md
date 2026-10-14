@@ -1,7 +1,7 @@
 # open-slx
 
 open-slx converts SCiLS Lab projects to imzML.
-It is tested on macOS (Apple silicon). It is pure Python. It is expected to run on Linux and Windows.
+It is tested on macOS (Apple silicon). It is pure Python. It is not tested on Linux or Windows.
 It needs no SCiLS Lab installation, no SCiLS Python API, and no licence key.
 
 imzML is the open file format for mass spectrometry imaging (MSI). MSI maps the mass spectra of a tissue section, spot by spot.
@@ -170,11 +170,11 @@ The full format notes are in these files:
 
 - open-slx reads SCiLS Lab 14 files (version 14.00.17781): `.sbd` `Version` 36 and `.slx` schema version 12.
 - open-slx reads centroid data only: the `.sbd` attribute `SpectraType` must be `Peaks`.
-- For any other `Version`, schema version, or `SpectraType`, open-slx prints an error that names the value and exits with code 4. It writes no imzML file.
+- For a `.sbd` `Version` other than 36, a `.sbd` `SpectraType` other than `Peaks`, or an `.slx` schema version other than 12, open-slx prints an error that names the value and exits with code 4. It writes no imzML file.
 - open-slx does not read or change the `secured` field in the `.sbd` file.
 - open-slx only reads the input files. It never writes to them.
 - A full conversion of a large dataset is not tested. Only 300 spots of the test data were converted.
-- open-slx checks only `Version` and `SpectraType`. If `SpectraType` is not `Peaks`, it stops with exit code 4.
+- open-slx checks only the `.sbd` `Version` (36), the `.sbd` `SpectraType` (`Peaks`), and the `.slx` schema version (12). It does not check `AxisType`.
 - We did not test resampled timsTOF projects. They can store spectra another way. If open-slx fails on such a project, open an issue with `Version`, `SpectraType`, and `AxisType`.
 - Reading an `.sbd` file over http or https is slow for full conversions. Copy the file first.
 
