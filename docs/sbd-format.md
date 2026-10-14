@@ -116,6 +116,9 @@ All intensities are above 0. For each spot, the sum of intensities equals `Total
 (target 349941746.77; spot 0: 141148770 against 0.40334922 * 349941746.77) within 1e-4 relative.
 This tests the intensity offsets and the peak counts. The m/z decoding is tested with the skyline match above.
 
+Manual run with the installed command: `--sbd <Zenodo URL> --max-spots 300`. pyimzML opens the output.
+Result: 300 spots, x 6 to 51, y 1 to 12, pixel size 50 x 50 micrometers, m/z 249.2955 to 1098.3752, 426 peaks in spectrum 0.
+
 ## Converter (`open-slx`)
 
 - `x = px + 1`, `y = py + 1` from the formula above. The pixel size is `abs(M[0,0])`, `abs(M[1,1])` in micrometers.

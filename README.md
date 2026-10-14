@@ -16,13 +16,23 @@ A SCiLS Lab project has two files. open-slx needs both.
 | `PROJECT.slx` | SQLite | Feature lists (m/z low and high), region tree, labels, a reference to the raw data source, project settings. It holds no intensities and no spot coordinates. |
 | `PROJECT.sbd` | HDF5 (Hierarchical Data Format 5) | Spectra, spot coordinates in micrometres, raster index per spot, global m/z axis, regions with spot lists, mean spectra, normalizations. |
 
-The `.sbd` file has the same base name as the `.slx` file. It is in the same folder.
+The `.sbd` file normally has the same base name as the `.slx` file. It is in the same folder.
+If no such file exists, open-slx uses the file name in the `.slx` storage settings (key `storage`, field `file`, shown in `OUT_metadata.json`). It looks for that name in the folder of the `.slx` file.
 
 Common mistake: a user copies only the `.slx` file.
 SCiLS Lab writes both files when it imports data.
 Copy both files. The `.sbd` file is usually several gigabytes.
 
 The original Bruker `.d` folder is not necessary.
+
+## If you have only the .slx file
+
+- SCiLS Lab writes the `.sbd` file at import. It is next to the `.slx` file and has the same base name. Look in the same folder on the computer that ran SCiLS Lab.
+- The `.slx` table `DataSources` names the path of the original raw data. The command `open-slx PROJECT.slx` writes this path to `OUT_metadata.json`, under `data_source` (key `source_path`). It does this even when the `.sbd` file is missing.
+- If the `.sbd` file is lost, use one of these options:
+  - Import the Bruker raw data (`.d` folder) into SCiLS Lab again. This makes a new `.sbd` file.
+  - Export imzML directly from SCiLS Lab, if you have a licence.
+- open-slx does not read Bruker `.d` folders.
 
 ## Install
 
@@ -133,7 +143,7 @@ For a spot with world coordinates X and Y, open-slx writes:
 The `+ 1` makes the pixel numbers start at 1, as the imzML format requires.
 The pixel size in the imzML file is `abs(M[0,0])` and `abs(M[1,1])`.
 
-The imzML files open in M2aia, Cardinal (R), pyimzML, METASPACE, and other imzML readers.
+pyimzML opens the output (tested). The files follow imzML 1.1, so other imzML readers such as M2aia, Cardinal and METASPACE are expected to open them. These readers are not tested yet.
 
 ## How it works
 
@@ -148,6 +158,14 @@ The full format notes are in these files:
 - [docs/slx-format.md](docs/slx-format.md)
 - [docs/sbd-format.md](docs/sbd-format.md)
 
+## Testing and verification
+
+- Test data: the Zenodo 21251439 `.sbd` file. SCiLS Lab 14.00.17781 wrote it. It has 283631 spots and centroid peak lists.
+- Automated network test (`test_zenodo_first_200_spots` in `tests/test_cli.py`): we converted the first 200 spots. For every spot, the sum of intensities equals the stored SCiLS Total Ion Count normalization times its `TargetValue`, within 1e-4 relative. The test asserts this. The m/z range of these spots is 249.6509 to 1098.3752.
+- Manual end-to-end run on macOS (Apple silicon): we ran the installed command with `--sbd <Zenodo URL> --max-spots 300`. pyimzML opens the output. Result: 300 spots, x 6 to 51, y 1 to 12, pixels of 50 x 50 um, m/z 249.2955 to 1098.3752, 426 peaks in spectrum 0.
+- m/z check: the decoded peaks match a region Skyline (maximum) spectrum on the global axis within one axis step. The median absolute deviation is 0.0007 to 0.0013 in m/z, for 4 spots in one region.
+- Unit tests: "Run the tests" gives the run counts.
+
 ## Limits
 
 - open-slx reads SCiLS Lab 14 files (version 14.00.17781): `.sbd` `Version` 36 and `.slx` schema version 12.
@@ -155,6 +173,14 @@ The full format notes are in these files:
 - For any other `Version`, schema version, or `SpectraType`, open-slx prints an error that names the value and exits with code 4. It writes no imzML file.
 - open-slx does not read or change the `secured` field in the `.sbd` file.
 - open-slx only reads the input files. It never writes to them.
+- A full conversion of a large dataset is not tested. Only 300 spots of the test data were converted.
+- open-slx checks only `Version` and `SpectraType`. If `SpectraType` is not `Peaks`, it stops with exit code 4.
+- We did not test resampled timsTOF projects. They can store spectra another way. If open-slx fails on such a project, open an issue with `Version`, `SpectraType`, and `AxisType`.
+- Reading an `.sbd` file over http or https is slow for full conversions. Copy the file first.
+
+## Reporting problems
+
+Report problems at <https://github.com/elparko/open-slx/issues>.
 
 ## Development
 
