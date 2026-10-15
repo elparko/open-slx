@@ -1,7 +1,7 @@
 # open-slx
 
 open-slx converts SCiLS Lab projects to imzML.
-It is tested on macOS (Apple silicon). It is pure Python. It is not tested on Linux or Windows.
+It is tested on macOS (Apple silicon). It is written in Python and uses h5py, numpy, and zstandard. It is not tested on Linux or Windows.
 It needs no SCiLS Lab installation, no SCiLS Python API, and no licence key.
 
 imzML is the open file format for mass spectrometry imaging (MSI). MSI maps the mass spectra of a tissue section, spot by spot.
