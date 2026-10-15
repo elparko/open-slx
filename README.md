@@ -1,3 +1,5 @@
+<p align="center"><img src="assets/logo.svg" width="96" alt="open-slx logo"></p>
+
 # open-slx
 
 open-slx converts SCiLS Lab projects to imzML.
